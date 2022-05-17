@@ -1,4 +1,4 @@
-# go-dutch
+# GoGoDutch
 
 ## Project setup
 ```
