@@ -1,0 +1,29 @@
+@mixin pc {
+    @media(min-width:968px) {
+        @content
+    }
+}
+
+;
+
+@mixin hoverBg($bg) {
+    transition: all .2s ease;
+
+    &:hover {
+        background-color: $bg;
+        transition: all .2s ease;
+    }
+}
+
+;
+
+@mixin hoverColor($color) {
+    transition: all .2s ease;
+
+    &:hover {
+        color: $color;
+        transition: all .2s ease;
+    }
+}
+
+;

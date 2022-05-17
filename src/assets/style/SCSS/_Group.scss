@@ -1,0 +1,187 @@
+.groupData {
+    p {
+        font-weight: 500;
+    }
+}
+
+.contentBlock {
+    height: calc(100vh - 147px);
+    flex-direction: column;
+}
+
+.groupName {
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    background-color: $main;
+    color: $gray;
+
+    .title {
+        border-bottom: 1px solid $gray;
+    }
+
+    h2 {
+        padding-bottom: 8px;
+    }
+
+    button {
+        color: $gray;
+        @include hoverColor($light)
+    }
+
+    .priceTotal {
+        padding-top: 24px;
+        text-align: end;
+        color: $light;
+
+        span {
+            font-size: 32px;
+            padding-right: 0;
+        }
+    }
+}
+
+.contentHead {
+    margin-bottom: 16px;
+
+    .lgBtn {
+        font-size: 16px;
+
+        &:first-child {
+            margin-right: 5px;
+        }
+
+        &:last-child {
+            margin-left: 5px;
+        }
+    }
+}
+
+.contentMain {
+    height: calc(100% - 220px);
+    overflow: auto;
+    color: $gray;
+    -webkit-text-fill-color: $main;
+    transition: color .3s ease;
+
+    &:hover {
+        color: #83A0B4;
+    }
+
+    &>li {
+        margin-bottom: 16px;
+    }
+}
+
+.contentBottom {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 10;
+    transform: translateX(-50%);
+    width: 100%;
+
+    @include pc {
+        width: 570px;
+    }
+
+    .lgBtn {
+        z-index: 2;
+        position: fixed;
+        border-radius: 0;
+    }
+}
+
+.userTitle {
+    padding-bottom: 8px;
+    border-bottom: 2px solid $main;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.contentList {
+    max-height: 500px;
+    overflow-Y: auto;
+    transition: all .5s;
+
+    h4 {
+        font-weight: 500;
+    }
+
+    li {
+        padding-bottom: 8px;
+        border-bottom: 1px solid #83A0B4;
+    }
+}
+
+.date {
+    -webkit-text-fill-color: #83A0B4;
+    font-size: 14px;
+}
+
+.hidden {
+    overflow: hidden;
+    max-height: 0;
+    transition: all .5s;
+}
+
+.editItem {
+
+    input,
+    select {
+        margin-bottom: 16px;
+    }
+
+    span {
+        display: block;
+        padding-right: 0;
+    }
+}
+
+.calcBlock {
+    position: fixed;
+    left: 50%;
+    bottom: -20px;
+    transform: translateX(-50%);
+    width: 100%;
+    max-height: 600px;
+    overflow: hidden;
+    padding: 10px 15px 10px 15px;
+    background-color: $main;
+    color: $gray;
+    transition: all .5s;
+
+    @include pc {
+        width: 570px;
+    }
+
+    .calcTitle {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid $gray;
+        font-size: 20px;
+
+        p {
+            font-size: 24px;
+        }
+    }
+
+    li {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #83A0B4;
+    }
+
+    h4 {
+        font-weight: 500;
+    }
+}
+
+.hiddenCalcBlock {
+    max-height: 0;
+    transition: all .5s;
+}
+
+.pay {
+    color: $light;
+}

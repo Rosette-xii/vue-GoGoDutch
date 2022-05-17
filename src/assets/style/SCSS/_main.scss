@@ -1,0 +1,221 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    box-sizing: border-box;
+    letter-spacing: 1px;
+}
+
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb {
+    width: 8px;
+    border-radius: 4px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 1px;
+}
+
+body {
+    position: relative;
+    background-color: $gray;
+}
+
+#app {
+    font-family: 'Roboto', 'Noto Sans TC', Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    color: $main;
+}
+
+.container {
+    position: relative;
+    margin: 0 auto;
+    padding: 0 15px;
+
+    @include pc {
+        max-width: 600px;
+    }
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.circleBtn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid $main;
+    border-radius: 50%;
+}
+
+.navBtn {
+    background-color: $gray;
+    color: $main;
+    transition: all .2s ease;
+
+    &:hover {
+        transition: all .2s ease;
+        background-color: $sub;
+        border-color: $sub;
+        color: $gray;
+    }
+}
+
+.addNewBtn {
+    display: block;
+    margin: 16px auto;
+    background-color: $main;
+    border: none;
+    color: $gray;
+    @include hoverBg($sub);
+
+}
+
+.editBtn {
+    border: none;
+    padding: 8px;
+    color: $main;
+    @include hoverColor($sub);
+}
+
+.lgBtn {
+    width: 100%;
+    height: auto;
+    padding: 10px 0;
+    border-radius: 10px;
+    background-color: $main;
+    color: $gray;
+    font-size: 20px;
+    font-weight: bold;
+    @include hoverBg($sub);
+
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-grid {
+    display: grid;
+}
+
+.d-inline {
+    display: inline;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.align-item-center {
+    align-items: center;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+section {
+    padding-top: 100px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: #ccc;
+    transition: all .2s ease;
+
+    &:focus-visible {
+        background-color: #fff;
+        outline: none;
+    }
+}
+
+option:disabled {
+    color: #444;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.editBlock {
+    min-width: 350px;
+    max-width: 500px;
+    padding: 15px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px #444;
+    z-index: -1;
+    opacity: 0;
+    transition: all .2s ease;
+
+    .blockHead {
+        padding-bottom: 16px;
+    }
+
+    .blockMain {
+        ul {
+            margin-top: 16px;
+            padding: 8px 0;
+            max-height: 40vh;
+            overflow: auto;
+        }
+    }
+
+    h3 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    li {
+        padding-bottom: 16px;
+
+        label {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 70%;
+        }
+    }
+}
+
+.swal2-confirm {
+    background-color: $main  !important;
+}
+
+.show {
+    z-index: 11;
+    opacity: 1;
+    transition: all .2s ease;
+}
