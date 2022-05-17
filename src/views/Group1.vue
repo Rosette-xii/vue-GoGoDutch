@@ -306,7 +306,7 @@ export default {
       } else {
         this.isEditMember = !this.isEditMember;
         this.memberTemp.groupName = this.groupData.groupName;
-        this.memberTemp.memberList = this.groupData.groupList.map((item) => item);
+        this.memberTemp.memberList = JSON.parse(JSON.stringify(this.groupData.groupList));
       }
     },
     // 關閉編輯成員
@@ -392,7 +392,7 @@ export default {
           }
         }
       }
-      this.groupData.groupList = item.memberList;
+      this.groupData.groupList = JSON.parse(JSON.stringify(item.memberList));
       const members = this.groupData.groupList.map((item) => item.name);
       console.log(members);
       this.pushData(members, this.groupData.groupName, "Group1");
