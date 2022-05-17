@@ -394,6 +394,7 @@ export default {
       }
       this.groupData.groupList = JSON.parse(JSON.stringify(item.memberList));
       const members = this.groupData.groupList.map((item) => item.name);
+      console.log(members);
       this.pushData(members, this.groupData.groupName, "Group1");
       this.isCalc = false;
       this.closeMember();
