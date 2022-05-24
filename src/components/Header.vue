@@ -1,7 +1,9 @@
 <template>
   <nav>
     <div class="navBar">
-      <h1><img alt="gogodutch logo" src="../assets/images/gogodutch-en-logo.svg" /></h1>
+      <router-link to="/">
+        <h1><img alt="gogodutch logo" src="../assets/images/gogodutch-en-logo.svg" /></h1>
+      </router-link>
       <button @click="addNewGroup" v-if="this.$route.path === '/'" type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-plus" /></button>
       <button @click="goPath" v-else type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-arrow-left-long" /></button>
     </div>

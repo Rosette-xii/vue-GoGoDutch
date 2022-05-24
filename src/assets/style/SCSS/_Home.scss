@@ -5,27 +5,6 @@
 .groupList {
     height: calc(100vh - 177px);
     overflow-Y: auto;
-
-    // @include pc {
-
-    //     &::-webkit-scrollbar {
-    //         background-color: transparent;
-    //         width: 0px;
-    //         transition: width 1s;
-    //     }
-
-    //     &:hover {
-    //         &::-webkit-scrollbar {
-    //             width: 4px;
-    //             transition: width 1s;
-    //         }
-
-    //         &::-webkit-scrollbar-thumb {
-    //             background-color: rgba(0, 0, 0, .2);
-    //         }
-    //     }
-    // }
-
 }
 
 .groupName {
@@ -54,8 +33,34 @@
 
 }
 
+.groupName.unActive {
+    background-color: $gray;
+    color: $main;
+
+    button {
+        color: $main;
+        @include hoverColor($sub)
+    }
+
+    .title {
+        border-bottom: 1px solid $main;
+    }
+
+    .goPath {
+        color: $main;
+    }
+}
+
 .member {
     padding-bottom: 24px;
+
+    p {
+        min-width: 51px;
+    }
+
+    ul {
+        flex-wrap: wrap;
+    }
 
     li::after {
         content: "、";
@@ -73,7 +78,6 @@
     color: $light;
     transition: right .3s ease;
 
-
     &:hover {
         right: 0px;
         transition: right .3s ease;
@@ -81,24 +85,6 @@
 
     span {
         cursor: pointer;
-    }
-}
-
-.groupName.unActive {
-    background-color: $gray;
-    color: $main;
-
-    button {
-        color: $main;
-        @include hoverColor($sub)
-    }
-
-    .title {
-        border-bottom: 1px solid $main;
-    }
-
-    .goPath {
-        color: $main;
     }
 }
 

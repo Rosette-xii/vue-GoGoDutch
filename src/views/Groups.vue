@@ -13,24 +13,24 @@
             </p>
           </div>
           <div class="d-flex">
-            <button @click="openMember" type="button" class="lgBtn">編輯成員</button>
-            <button @click="openAdd" type="button" class="lgBtn">新增項目</button>
+            <button @click="openEditMember" type="button" class="lgBtn">編輯成員</button>
+            <button @click="openAddItem" type="button" class="lgBtn">新增項目</button>
           </div>
         </div>
         <ul class="contentMain">
-          <li v-for="item in groupData.groupList" :key="item.key">
-            <div class="userTitle d-flex align-item-center justify-content-between" @click="item.isHidden = !item.isHidden">
-              <h3>{{ item.name }}</h3>
-              <p>目前支出：{{ perTotalPrice(item) }}</p>
+          <li v-for="i in groupData.groupList" :key="i.key">
+            <div class="userTitle d-flex align-item-center justify-content-between" @click="i.isHidden = !i.isHidden">
+              <h3>{{ i.name }}</h3>
+              <p>目前支出：{{ perTotalPrice(i) }}</p>
             </div>
-            <ul class="contentList" :class="{ hidden: item.isHidden }">
-              <li v-for="(obj, index) in item.list" :key="index">
+            <ul class="contentList" :class="{ hidden: i.isHidden }">
+              <li v-for="(obj, index) in i.list" :key="index">
                 <div class="d-flex align-item-center justify-content-between">
                   <h4>{{ obj.content }}</h4>
                   <p class="d-flex align-item-center">
                     <span>${{ obj.price }}</span>
-                    <button @click="openEdit(obj)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-pen" /></button>
-                    <button @click="deleItem(item, index)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-trash" /></button>
+                    <button @click="openEditItem(obj)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-pen" /></button>
+                    <button @click="deleItem(i, index)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-trash" /></button>
                   </p>
                 </div>
                 <p class="date">{{ obj.date }}</p>
@@ -48,26 +48,25 @@
           <p>${{ perAveragePrice }}</p>
         </div>
         <ul>
-          <li v-for="item in groupData.groupList" :key="item.id" class="d-flex align-item-center justify-content-between">
-            <h4>{{ item.name }}</h4>
-            <p :class="{ pay: item.totalPrice < perAveragePrice }">{{ calPay(item.totalPrice) }}</p>
+          <li v-for="i in groupData.groupList" :key="i.id" class="d-flex align-item-center justify-content-between">
+            <h4>{{ i.name }}</h4>
+            <p :class="{ pay: i.totalPrice < perAveragePrice }">{{ calPay(i.totalPrice) }}</p>
           </li>
         </ul>
       </div>
     </div>
-
     <div class="editBlock editMember" :class="{ show: isEditMember }">
       <div class="blockHead d-flex justify-content-between align-item-center">
         <h3>編輯群組</h3>
-        <button @click="closeMember" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
+        <button @click="closeEditMember" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
         <input type="text" v-model="memberTemp.groupName" placeholder="群組名稱" />
         <ul>
-          <li v-for="item in memberTemp.memberList" :key="item.id" class="d-flex align-item-center justify-content-between">
-            <label :for="item.id">成員</label>
-            <input :id="item.id" v-model="item.name" type="text" />
-            <button @click="deleMember(item)" type="button" class="editBtn">
+          <li v-for="i in memberTemp.memberList" :key="i.id" class="d-flex align-item-center justify-content-between">
+            <label :for="i.id">成員</label>
+            <input :id="i.id" v-model="i.name" type="text" />
+            <button @click="deleMember(i)" type="button" class="editBtn">
               <font-awesome-icon icon="fa-solid fa-minus" />
             </button>
           </li>
@@ -83,7 +82,7 @@
       <div class="blockHead d-flex justify-content-between align-item-center">
         <h3 v-if="!this.itemTemp.isEdit">新增項目</h3>
         <h3 v-else>編輯項目</h3>
-        <button @click="closeAdd" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
+        <button @click="closeAddItem" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
         <input type="text" v-model="itemTemp.content" placeholder="項目名稱" />
@@ -95,7 +94,7 @@
         </vc-date-picker>
         <select v-model="itemTemp.name">
           <option value="" disabled>誰先付的</option>
-          <option v-for="(item, index) in members" :key="index" :value="item">{{ item }}</option>
+          <option v-for="(i, index) in members" :key="index" :value="i">{{ i }}</option>
         </select>
       </div>
       <div class="blockBottom">
@@ -146,7 +145,6 @@ export default {
         this.createData();
       }
     },
-    // 創建資料
     createData() {
       const getAllData = JSON.parse(window.localStorage.getItem("HomeData"));
       this.homeData = getAllData;
@@ -166,39 +164,39 @@ export default {
       };
       this.saveStorage();
     },
-    // 刪除所有項目
     deleAllItem() {
-      this.$swal
-        .fire({
-          title: "確定要刪除全部資料嗎?",
-          showCancelButton: true,
-          confirmButtonText: "刪除",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.groupData.groupList.forEach((i) => {
-              i.list = [];
-            });
-            this.$swal.fire({
-              title: "刪除成功",
-              showConfirmButton: false,
-              timer: 1000,
-            });
-            this.saveStorage();
-          }
-        });
-      this.isCalc = false;
+      const checkLength = this.groupData.groupList.every((i) => i.list.length === 0);
+      if (!checkLength) {
+        this.$swal
+          .fire({
+            title: "確定要刪除全部資料嗎?",
+            showCancelButton: true,
+            confirmButtonText: "刪除",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              this.groupData.groupList.forEach((i) => {
+                i.list = [];
+              });
+              this.$swal.fire({
+                title: "刪除成功",
+                showConfirmButton: false,
+                timer: 1000,
+              });
+              this.saveStorage();
+            }
+          });
+        this.isCalc = false;
+      }
     },
-    // 打開新增項目
-    openAdd() {
+    openAddItem() {
       if (this.isAdd) {
         return;
       } else {
         this.isAdd = true;
       }
     },
-    // 關閉新增項目
-    closeAdd() {
+    closeAddItem() {
       this.isAdd = false;
       this.itemTemp = {
         name: "",
@@ -207,7 +205,6 @@ export default {
         date: new Date(),
       };
     },
-    // 新增項目
     addNewItem(i) {
       if (!i.content) {
         this.$swal.fire("請輸入項目名稱");
@@ -235,10 +232,9 @@ export default {
         timer: 1000,
       });
       this.isCalc = false;
-      this.closeAdd();
+      this.closeAddItem();
       this.saveStorage();
     },
-    // 刪除項目
     deleItem(i, idx) {
       this.$swal
         .fire({
@@ -259,8 +255,7 @@ export default {
           }
         });
     },
-    // 打開編輯項目
-    openEdit(i) {
+    openEditItem(i) {
       if (this.isAdd) {
         return;
       } else {
@@ -276,7 +271,6 @@ export default {
         };
       }
     },
-    // 完成編輯項目
     doneEditItem(i) {
       const curMemberIdx = this.groupData.groupList.findIndex((obj) => obj.name === i.currentName);
       const idx = this.groupData.groupList[curMemberIdx].list.findIndex((obj) => obj.id === i.id);
@@ -305,11 +299,10 @@ export default {
         timer: 1000,
       });
       this.isCalc = false;
-      this.closeAdd();
+      this.closeAddItem();
       this.saveStorage();
     },
-    // 打開編輯成員
-    openMember() {
+    openEditMember() {
       if (this.isEditMember) {
         return;
       } else {
@@ -318,8 +311,7 @@ export default {
         this.memberTemp.memberList = JSON.parse(JSON.stringify(this.groupData.groupList));
       }
     },
-    // 關閉編輯成員
-    closeMember() {
+    closeEditMember() {
       this.isEditMember = false;
       this.memberTemp = {
         groupName: "",
@@ -327,7 +319,6 @@ export default {
         deleMember: [],
       };
     },
-    // 新增暫定成員
     addTempMember() {
       if (this.memberTemp.memberList.length >= 8) {
         this.$swal.fire("最多八名成員");
@@ -341,7 +332,6 @@ export default {
         });
       }
     },
-    // 刪除暫定成員
     deleMember(obj) {
       if (this.memberTemp.memberList.length <= 2) {
         this.$swal.fire("最少兩名成員");
@@ -364,7 +354,6 @@ export default {
           }
         });
     },
-    // 完成編輯成員
     doneEditMember(item) {
       // 判斷群組名
       if (!item.groupName) {
@@ -421,7 +410,7 @@ export default {
         timer: 1000,
       });
       window.localStorage.setItem("HomeData", JSON.stringify(this.homeData));
-      this.closeMember();
+      this.closeEditMember();
       this.saveStorage();
     },
   },

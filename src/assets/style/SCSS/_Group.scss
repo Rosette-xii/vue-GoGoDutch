@@ -4,11 +4,6 @@
     }
 }
 
-.contentBlock {
-    height: calc(100vh - 147px);
-    flex-direction: column;
-}
-
 .groupName {
     background-color: $main;
     color: $gray;
@@ -32,6 +27,11 @@
             padding-right: 0;
         }
     }
+}
+
+.contentBlock {
+    height: calc(100vh - 147px);
+    flex-direction: column;
 }
 
 .contentHead {
@@ -59,13 +59,6 @@
     }
 }
 
-.userTitle {
-    padding-bottom: 8px;
-    border-bottom: 2px solid $main;
-    font-size: 20px;
-    cursor: pointer;
-}
-
 .contentList {
     max-height: 500px;
     overflow-Y: auto;
@@ -79,34 +72,6 @@
         padding-bottom: 8px;
         border-bottom: 1px solid #83A0B4;
     }
-}
-
-.date {
-    color: #83A0B4;
-    font-size: 14px;
-}
-
-.hidden {
-    overflow: hidden;
-    max-height: 0;
-    transition: all .5s;
-}
-
-.editItem {
-
-    input,
-    select {
-        margin-bottom: 16px;
-    }
-
-    span {
-        display: block;
-        padding-right: 0;
-    }
-}
-
-.pay {
-    color: $light;
 }
 
 .contentBottom {
@@ -158,11 +123,46 @@
     }
 }
 
+.userTitle {
+    padding-bottom: 8px;
+    border-bottom: 2px solid $main;
+    font-size: 16px;
+    cursor: pointer;
+
+    @include pc {
+        font-size: 20px;
+    }
+}
+
+.date {
+    color: #83A0B4;
+    font-size: 14px;
+}
+
+.hidden {
+    overflow: hidden;
+    max-height: 0;
+    transition: all .5s;
+}
+
+.editItem {
+
+    input,
+    select {
+        margin-bottom: 16px;
+    }
+
+    span {
+        display: block;
+        padding-right: 0;
+    }
+}
+
+.pay {
+    color: $light;
+}
+
 .hiddenCalcBlock {
     bottom: -500px;
     transition: bottom .5s;
-}
-
-.overflowHidden {
-    overflow: hidden;
 }

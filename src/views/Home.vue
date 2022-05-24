@@ -2,19 +2,19 @@
   <section class="groupBlock">
     <div class="container">
       <ul class="groupList" data-aos="fade-right">
-        <li v-for="item in groupData" :key="item.id" class="groupName" :class="{ unActive: item.member.length === 0 }">
+        <li v-for="i in groupData" :key="i.id" class="groupName" :class="{ unActive: i.member.length === 0 }">
           <div class="title d-flex justify-content-between">
-            <h2>{{ item.groupName }}</h2>
-            <button @click="deleGroup(item)" type="button"><font-awesome-icon icon="fa-solid fa-trash" /></button>
+            <h2>{{ i.groupName }}</h2>
+            <button @click="deleGroup(i)" type="button"><font-awesome-icon icon="fa-solid fa-trash" /></button>
           </div>
           <div class="member d-flex">
             <p>成員：</p>
             <ul class="d-flex align-item-center">
-              <li v-for="(member, index) in item.member" :key="index">{{ member }}</li>
+              <li v-for="(member, index) in i.member" :key="index">{{ member }}</li>
             </ul>
           </div>
-          <div class="goPath" @click="openEdit(item)">
-            <span v-if="item.member.length === 0"
+          <div class="goPath" @click="openEdit(i)">
+            <span v-if="i.member.length === 0"
               >建立
               <font-awesome-icon icon="fa-solid fa-arrow-right-long" />
             </span>
@@ -28,25 +28,16 @@
     </div>
     <div class="editBlock" :class="{ show: isEdit }">
       <div class="blockHead d-flex justify-content-between align-item-center">
-        <div class="d-flex align-item-center">
-          <h3>新增群組</h3>
-          <!-- <div class="switch" @click="AbModeAlert">
-            <input class="switch-checkbox" id="switchID1" type="checkbox" name="switch-checkbox" v-model="temp.isAbMode" />
-            <label class="switch-label" for="switchID1">
-              <span class="switch-txt" turnOn="AB制" turnOff="AB制"></span>
-              <span class="switch-Round-btn"></span>
-            </label>
-          </div> -->
-        </div>
+        <h3>新增群組</h3>
         <button @click="closeEdit" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
         <input type="text" v-model="temp.groupName" placeholder="群組名稱(不超過10個字)" />
         <ul>
-          <li v-for="item in temp.member" :key="item.id" class="d-flex align-item-center justify-content-between">
-            <label :for="item.id">成員</label>
-            <input :id="item.id" type="text" v-model="item.name" />
-            <button @click="deleMember(item)" type="button" class="editBtn">
+          <li v-for="i in temp.member" :key="i.id" class="d-flex align-item-center justify-content-between">
+            <label :for="i.id">成員</label>
+            <input :id="i.id" type="text" v-model="i.name" />
+            <button @click="deleMember(i)" type="button" class="editBtn">
               <font-awesome-icon icon="fa-solid fa-minus" />
             </button>
           </li>
@@ -92,10 +83,6 @@ export default {
   },
   methods: {
     /* localstorage 相關 */
-    // render() {
-    //   this.saveStorage();
-    //   this.getStorage();
-    // },
     saveStorage() {
       const data = JSON.stringify(this.groupData);
       localStorage.setItem("HomeData", data);
