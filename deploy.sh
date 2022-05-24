@@ -14,6 +14,6 @@ git add -A
 git commit -m "deploy"
 
 // push 到 HTTPS，gh-pages
-git push -f git@github.com:<USERNAME>/<REPO>.git main:gh-pages
+git push -f https://github.com/Rosette-xii/vue-GoGoDutch.git main:gh-pages
 
 cd -
