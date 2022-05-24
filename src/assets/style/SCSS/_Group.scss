@@ -10,15 +10,8 @@
 }
 
 .groupName {
-    margin-bottom: 16px;
-    padding: 16px;
-    border-radius: 10px;
     background-color: $main;
     color: $gray;
-
-    .title {
-        border-bottom: 1px solid $gray;
-    }
 
     h2 {
         padding-bottom: 8px;
@@ -60,35 +53,9 @@
 .contentMain {
     height: calc(100% - 220px);
     overflow: auto;
-    color: $gray;
-    -webkit-text-fill-color: $main;
-    transition: color .3s ease;
-
-    &:hover {
-        color: #83A0B4;
-    }
 
     &>li {
         margin-bottom: 16px;
-    }
-}
-
-.contentBottom {
-    position: fixed;
-    left: 50%;
-    bottom: 0;
-    z-index: 10;
-    transform: translateX(-50%);
-    width: 100%;
-
-    @include pc {
-        width: 570px;
-    }
-
-    .lgBtn {
-        z-index: 2;
-        position: fixed;
-        border-radius: 0;
     }
 }
 
@@ -115,7 +82,7 @@
 }
 
 .date {
-    -webkit-text-fill-color: #83A0B4;
+    color: #83A0B4;
     font-size: 14px;
 }
 
@@ -138,22 +105,36 @@
     }
 }
 
-.calcBlock {
+.pay {
+    color: $light;
+}
+
+.contentBottom {
     position: fixed;
     left: 50%;
-    bottom: -20px;
     transform: translateX(-50%);
     width: 100%;
-    max-height: 600px;
-    overflow: hidden;
-    padding: 10px 15px 10px 15px;
-    background-color: $main;
-    color: $gray;
-    transition: all .5s;
 
     @include pc {
         width: 570px;
     }
+
+    .lgBtn {
+
+        border-radius: 0;
+    }
+}
+
+.calcBlock {
+    position: absolute;
+    bottom: 47px;
+    width: 100%;
+    max-height: 500px;
+    padding: 15px;
+    z-index: -1;
+    background-color: $main;
+    color: $gray;
+    transition: bottom .5s;
 
     .calcTitle {
         margin-bottom: 8px;
@@ -178,10 +159,10 @@
 }
 
 .hiddenCalcBlock {
-    max-height: 0;
-    transition: all .5s;
+    bottom: -500px;
+    transition: bottom .5s;
 }
 
-.pay {
-    color: $light;
+.overflowHidden {
+    overflow: hidden;
 }

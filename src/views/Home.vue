@@ -1,20 +1,43 @@
 <template>
   <section class="groupBlock">
-    <ul class="container" data-aos="fade-right">
-      <li @click="openEdit(item)" v-for="item in groupData" :key="item.id" class="group" :class="{ active: item.member.length > 0 }">
-        <h2>{{ item.groupName }}</h2>
-        <div class="member d-flex">
-          <p>成員：</p>
-          <ul class="d-flex align-item-center">
-            <li v-for="(member, index) in item.member" :key="index">{{ member }}</li>
-          </ul>
-        </div>
-        <a href="#"><span v-if="item.member.length === 0">建立</span><span v-else>進入</span><font-awesome-icon icon="fa-solid fa-arrow-right-long" /></a>
-      </li>
-    </ul>
+    <div class="container">
+      <ul class="groupList" data-aos="fade-right">
+        <li v-for="item in groupData" :key="item.id" class="groupName" :class="{ unActive: item.member.length === 0 }">
+          <div class="title d-flex justify-content-between">
+            <h2>{{ item.groupName }}</h2>
+            <button @click="deleGroup(item)" type="button"><font-awesome-icon icon="fa-solid fa-trash" /></button>
+          </div>
+          <div class="member d-flex">
+            <p>成員：</p>
+            <ul class="d-flex align-item-center">
+              <li v-for="(member, index) in item.member" :key="index">{{ member }}</li>
+            </ul>
+          </div>
+          <div class="goPath" @click="openEdit(item)">
+            <span v-if="item.member.length === 0"
+              >建立
+              <font-awesome-icon icon="fa-solid fa-arrow-right-long" />
+            </span>
+            <span v-else
+              >進入
+              <font-awesome-icon icon="fa-solid fa-arrow-right-long" />
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
     <div class="editBlock" :class="{ show: isEdit }">
       <div class="blockHead d-flex justify-content-between align-item-center">
-        <h3>新增群組</h3>
+        <div class="d-flex align-item-center">
+          <h3>新增群組</h3>
+          <!-- <div class="switch" @click="AbModeAlert">
+            <input class="switch-checkbox" id="switchID1" type="checkbox" name="switch-checkbox" v-model="temp.isAbMode" />
+            <label class="switch-label" for="switchID1">
+              <span class="switch-txt" turnOn="AB制" turnOff="AB制"></span>
+              <span class="switch-Round-btn"></span>
+            </label>
+          </div> -->
+        </div>
         <button @click="closeEdit" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
@@ -39,45 +62,19 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from "@/components/HelloWorld.vue";
-
 export default {
   data() {
     return {
-      storageKey: "HomeData",
       groupData: [
         {
           id: 1,
-          path: "/Group1",
-          name: "Group1",
-          groupName: "新增群組",
-          member: [],
-        },
-        {
-          id: 2,
-          path: "/Group2",
-          name: "Group2",
-          groupName: "新增群組",
-          member: [],
-        },
-        {
-          id: 3,
-          path: "/Group3",
-          name: "Group3",
-          groupName: "新增群組",
-          member: [],
-        },
-        {
-          id: 4,
-          path: "/Group4",
-          name: "Group4",
           groupName: "新增群組",
           member: [],
         },
       ],
       isEdit: false,
       temp: {
+        isAbMode: false,
         groupName: "",
         id: 0,
         member: [
@@ -94,31 +91,31 @@ export default {
     };
   },
   methods: {
-    saveStorage: function () {
+    /* localstorage 相關 */
+    // render() {
+    //   this.saveStorage();
+    //   this.getStorage();
+    // },
+    saveStorage() {
       const data = JSON.stringify(this.groupData);
-      localStorage.setItem(this.storageKey, data);
+      localStorage.setItem("HomeData", data);
     },
-    getStorage: function () {
-      const data = JSON.parse(localStorage.getItem(this.storageKey));
+    getStorage() {
+      const data = JSON.parse(localStorage.getItem("HomeData"));
       if (data) {
         this.groupData = data;
       }
     },
-    render: function () {
-      this.saveStorage();
-      this.getStorage();
-    },
-    pushData: function (groupName, memberData, name) {
+    goPath(id) {
       this.$router.push({
-        name: name,
-        params: { groupName, memberData },
+        name: "Groups",
+        params: {
+          id,
+        },
       });
     },
-    goPath: function (path) {
-      this.$router.push(path);
-    },
-    closeEdit: function () {
-      this.isEdit = !this.isEdit;
+    closeEdit() {
+      this.isEdit = false;
       this.temp = {
         groupName: "",
         id: 0,
@@ -134,29 +131,35 @@ export default {
         ],
       };
     },
-    openEdit: function (item) {
+    openEdit(item) {
       if (item.member.length > 0) {
-        this.goPath(item.path);
-      } else if (item.member.length > 0 || this.isEdit === true) {
-        return;
-      } else {
+        this.goPath(item.id);
+      } else if (item.member.length === 0 || !this.isEdit) {
         this.temp.id = item.id;
-        this.isEdit = !this.isEdit;
+        this.isEdit = true;
       }
     },
-    doneEdit: function (item) {
+    doneEdit(item) {
       const memberList = item.member.map((item) => item.name);
+      const isValue = item.member.every((item) => item.name !== "");
       if (!item.groupName) {
-        this.$swal.fire("請輸入群組名稱");
+        this.$swal.fire({
+          title: "請輸入群組名稱!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       } else if (item.groupName.length > 10) {
-        this.$swal.fire("名稱不可超過10個字");
+        this.$swal.fire({
+          title: "名稱不可超過10個字!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       }
-      const isValue = item.member.every((item) => item.name !== "");
       if (!isValue) {
         this.$swal.fire({
-          title: "請輸入使用者名稱",
+          title: "請輸入使用者名稱!",
           showConfirmButton: false,
           timer: 1000,
         });
@@ -174,28 +177,30 @@ export default {
           }
         }
       }
-      this.isEdit = !this.isEdit;
       this.groupData.forEach((item) => {
         if (item.id === this.temp.id) {
+          item.isAbMode = this.temp.isAbMode;
           item.groupName = this.temp.groupName;
           item.member = memberList;
-          this.pushData(item.groupName, memberList, item.name);
+          this.goPath(item.id);
         }
       });
-      this.render();
+      this.saveStorage();
       this.closeEdit();
     },
-    addMember: function () {
+    addMember() {
       if (this.temp.member.length >= 8) {
         this.$swal.fire("最多八名成員");
-        return;
+      } else {
+        const allIds = this.temp.member.map((i) => i.id);
+
+        this.temp.member.push({
+          id: Math.max(...allIds) + 1 || this.temp.member.length + 1,
+          name: "",
+        });
       }
-      this.temp.member.push({
-        id: Date.now(),
-        name: "",
-      });
     },
-    deleMember: function (obj) {
+    deleMember(obj) {
       if (this.temp.member.length <= 2) {
         this.$swal.fire("最少兩名成員");
         return;
@@ -203,26 +208,59 @@ export default {
       const index = this.temp.member.findIndex((item) => item.id === obj.id);
       this.temp.member.splice(index, 1);
     },
-    init: function () {
-      const members = this.$route.params.members;
-      const groupName = this.$route.params.groupName;
-      const name = this.$route.params.name;
-      if (!name) {
-        this.getStorage();
+    deleGroup(item) {
+      if (this.groupData[0].member.length > 0) {
+        this.$swal
+          .fire({
+            title: "確定要刪除?",
+            text: "該群組的項目也會同時刪除",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "確定刪除",
+            cancelButtonText: "取消",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              const index = this.groupData.findIndex((i) => i.id === item.id);
+              localStorage.removeItem(`group${this.groupData[index].id}`);
+              this.groupData.splice(index, 1);
+              this.saveStorage();
+              this.$swal.fire({
+                title: "刪除成功",
+                showConfirmButton: false,
+                timer: 1000,
+              });
+              if (this.groupData.length === 0) {
+                localStorage.removeItem(`HomeData`);
+                this.groupData[0] = {
+                  id: 1,
+                  groupName: "新增群組",
+                  member: [],
+                };
+              }
+            }
+          });
+      }
+    },
+    pushData(item) {
+      if (item) {
+        this.groupData.push(item);
+        this.saveStorage();
       } else {
-        this.groupData.filter((item) => {
-          if (item.name === name) {
-            item.groupName = groupName;
-            item.member = members;
-          }
-        });
-        this.render();
+        this.openEdit(this.groupData[0]);
       }
     },
   },
   mounted() {
-    this.init();
+    this.getStorage();
+  },
+  created() {
+    this.$bus.$on("pushNew", (i) => {
+      this.pushData(i);
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off("pushNew");
   },
 };
 </script>
-

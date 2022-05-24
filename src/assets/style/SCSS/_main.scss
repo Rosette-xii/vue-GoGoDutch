@@ -8,16 +8,27 @@
     letter-spacing: 1px;
 }
 
-*::-webkit-scrollbar,
-*::-webkit-scrollbar-thumb {
-    width: 8px;
-    border-radius: 4px;
-    background-clip: padding-box;
-    border: 3px solid transparent;
+::-webkit-scrollbar {
+    width: 10px;
 }
 
-*::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 0 1px;
+::-webkit-scrollbar-button {
+    background: $sub;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #83A0B4;
+    border: 4px solid $gray;
+
+    ::-webkit-scrollbar-track {
+        box-shadow: transparent;
+    }
+}
+
+::-webkit-scrollbar-button {
+    display: none;
 }
 
 body {
@@ -210,12 +221,82 @@ input::-webkit-inner-spin-button {
     }
 }
 
-.swal2-confirm {
-    background-color: $main  !important;
-}
-
 .show {
     z-index: 11;
     opacity: 1;
     transition: all .2s ease;
+}
+
+.switch {
+    position: relative;
+    margin-left: 8px;
+    width: 75px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.switch-checkbox {
+    display: none;
+}
+
+.switch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.switch-txt {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.switch-txt::before,
+.switch-txt::after {
+    display: block;
+    float: right;
+    width: 50%;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+.switch-txt::after {
+    content: attr(turnOn);
+    padding-left: 10px;
+    background: $sub;
+    color: #fff;
+}
+
+.switch-txt::before {
+    content: attr(turnOff);
+    padding-right: 10px;
+    background: #ddd;
+    color: #aaa;
+    text-align: right;
+}
+
+.switch-Round-btn {
+    position: absolute;
+    display: block;
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+    background: #fff;
+    top: 0;
+    bottom: 0;
+    right: 45px;
+    border-radius: 13px;
+    transition: all 0.3s ease-in 0s;
+}
+
+.switch-checkbox:checked+.switch-label .switch-txt {
+    margin-left: 0;
+}
+
+.switch-checkbox:checked+.switch-label .switch-Round-btn {
+    right: 0;
 }

@@ -1,7 +1,7 @@
 <template>
-  <section class="groupData" data-aos="fade-left">
+  <section class="groupData">
     <div class="container">
-      <div class="contentBlock">
+      <div class="contentBlock" data-aos="fade-right">
         <div class="contentHead">
           <div class="groupName">
             <div class="title d-flex justify-content-between">
@@ -30,7 +30,7 @@
                   <p class="d-flex align-item-center">
                     <span>${{ obj.price }}</span>
                     <button @click="openEdit(obj)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-pen" /></button>
-                    <button @click="deleItem(index, item)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-trash" /></button>
+                    <button @click="deleItem(item, index)" type="button"><font-awesome-icon class="editBtn" icon="fa-solid fa-trash" /></button>
                   </p>
                 </div>
                 <p class="date">{{ obj.date }}</p>
@@ -38,10 +38,10 @@
             </ul>
           </li>
         </ul>
-        <div class="contentBottom">
-          <button @click="isCalc = !isCalc" type="button" class="lgBtn">結算</button>
-        </div>
       </div>
+    </div>
+    <div class="contentBottom" :class="{ overflowHidden: !isCalc }">
+      <button @click="isCalc = !isCalc" type="button" class="lgBtn">結算</button>
       <div class="calcBlock" :class="{ hiddenCalcBlock: !isCalc }">
         <div class="calcTitle d-flex align-item-center justify-content-between">
           <h3>平均每人花費</h3>
@@ -105,13 +105,13 @@
     </div>
   </section>
 </template>
+
 <script>
 export default {
   name: "Group1",
   data() {
     return {
-      appData: [],
-      storageKey: "Group1Data",
+      homeData: null,
       groupData: {
         groupName: "",
         groupList: [],
@@ -133,46 +133,41 @@ export default {
     };
   },
   methods: {
-    saveStorage: function () {
+    saveStorage() {
       const data = JSON.stringify(this.groupData);
-      localStorage.setItem(this.storageKey, data);
+      localStorage.setItem(`group${this.$route.params.id}`, data);
     },
-    getStorage: function () {
-      const data = JSON.parse(localStorage.getItem(this.storageKey));
+    getStorage() {
+      const data = JSON.parse(window.localStorage.getItem(`group${this.$route.params.id}`));
       if (data) {
         this.groupData = data;
+        this.homeData = JSON.parse(window.localStorage.getItem("HomeData"));
+      } else {
+        this.createData();
       }
     },
-    render: function () {
-      this.saveStorage();
-      this.getStorage();
-    },
     // 創建資料
-    createData: async function () {
-      const res = await this.getData();
-      this.groupData.groupList = res.map((item, index) => ({
-        id: index,
-        name: item,
-        list: [],
-        isHidden: false,
-        totalPrice: 0,
-      }));
-      this.render();
-    },
-    // 取得member資料
-    getData: function () {
-      return new Promise((resolve, reject) => {
-        const data = this.$route.params.memberData;
-        this.groupData.groupName = this.$route.params.groupName;
-        if (data) {
-          resolve(data);
-        } else {
-          reject(new Error("error"));
-        }
+    createData() {
+      const getAllData = JSON.parse(window.localStorage.getItem("HomeData"));
+      this.homeData = getAllData;
+      const curId = getAllData.findIndex((i) => i.id === this.$route.params.id);
+      let setGroupList = getAllData[curId].member.map((name, idx) => {
+        return {
+          id: idx,
+          name: name,
+          list: [],
+          isHidden: false,
+          totalPrice: 0,
+        };
       });
+      this.groupData = {
+        groupName: getAllData[curId].groupName,
+        groupList: setGroupList,
+      };
+      this.saveStorage();
     },
     // 刪除所有項目
-    deleAllItem: function () {
+    deleAllItem() {
       this.$swal
         .fire({
           title: "確定要刪除全部資料嗎?",
@@ -181,27 +176,30 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            this.groupData.groupList.forEach((item) => {
-              item.list = [];
+            this.groupData.groupList.forEach((i) => {
+              i.list = [];
             });
-            this.render();
-          } else if (result.isDenied) {
-            return;
+            this.$swal.fire({
+              title: "刪除成功",
+              showConfirmButton: false,
+              timer: 1000,
+            });
+            this.saveStorage();
           }
         });
       this.isCalc = false;
     },
     // 打開新增項目
-    openAdd: function () {
+    openAdd() {
       if (this.isAdd) {
         return;
       } else {
-        this.isAdd = !this.isAdd;
+        this.isAdd = true;
       }
     },
     // 關閉新增項目
-    closeAdd: function () {
-      this.isAdd = !this.isAdd;
+    closeAdd() {
+      this.isAdd = false;
       this.itemTemp = {
         name: "",
         content: "",
@@ -210,33 +208,38 @@ export default {
       };
     },
     // 新增項目
-    addNewItem: function (item) {
-      if (!item.content) {
+    addNewItem(i) {
+      if (!i.content) {
         this.$swal.fire("請輸入項目名稱");
         return;
-      } else if (typeof item.price !== "number") {
+      } else if (typeof i.price !== "number") {
         this.$swal.fire("請輸入正確金額");
         return;
-      } else if (!item.name) {
+      } else if (!i.name) {
         this.$swal.fire("請選擇支付對象");
         return;
       }
-      const index = this.groupData.groupList.findIndex((obj) => obj.name === item.name);
+      const index = this.groupData.groupList.findIndex((obj) => obj.name === i.name);
       this.groupData.groupList[index].isHidden = false;
       this.groupData.groupList[index].list.push({
         id: Date.now(),
-        name: item.name,
-        content: item.content,
-        price: item.price,
-        date: `${item.date.getFullYear()}/${item.date.getMonth() + 1}/${item.date.getDate()}`,
-        orignDate: item.date,
+        name: i.name,
+        content: i.content,
+        price: i.price,
+        date: `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`,
+        orignDate: i.date,
+      });
+      this.$swal.fire({
+        title: "新增成功",
+        showConfirmButton: false,
+        timer: 1000,
       });
       this.isCalc = false;
       this.closeAdd();
-      this.render();
+      this.saveStorage();
     },
     // 刪除項目
-    deleItem: function (index, item) {
+    deleItem(i, idx) {
       this.$swal
         .fire({
           title: "確定要刪除嗎?",
@@ -245,73 +248,79 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            item.list.splice(index, 1);
+            i.list.splice(idx, 1);
+            this.$swal.fire({
+              title: "刪除成功",
+              showConfirmButton: false,
+              timer: 1000,
+            });
             this.isCalc = false;
-            this.render();
-          } else if (result.isDenied) {
-            return;
+            this.saveStorage();
           }
         });
     },
     // 打開編輯項目
-    openEdit: function (item) {
+    openEdit(i) {
       if (this.isAdd) {
         return;
       } else {
         this.isAdd = !this.isAdd;
         this.itemTemp = {
-          id: item.id,
-          currentName: item.name,
-          name: item.name,
-          content: item.content,
-          price: item.price,
-          date: item.orignDate,
+          id: i.id,
+          currentName: i.name,
+          name: i.name,
+          content: i.content,
+          price: i.price,
+          date: i.orignDate,
           isEdit: true,
         };
       }
     },
     // 完成編輯項目
-    doneEditItem: function (item) {
-      const curMemberIndex = this.groupData.groupList.findIndex((obj) => obj.name === item.currentName);
-      const itemIndex = this.groupData.groupList[curMemberIndex].list.findIndex((obj) => obj.id === item.id);
-      if (item.name === item.currentName) {
-        const data = this.groupData.groupList[curMemberIndex].list[itemIndex];
-        data.content = item.content;
-        data.price = item.price;
-        data.date = `${item.date.getFullYear()}/${item.date.getMonth() + 1}/${item.date.getDate()}`;
-        this.closeAdd();
-        this.groupData.groupList[curMemberIndex].isHidden = false;
-        this.render();
-      } else if (item.name !== item.currentName) {
-        this.groupData.groupList[curMemberIndex].list.splice(itemIndex, 1);
-        const newMemberIndex = this.groupData.groupList.findIndex((obj) => obj.name === item.name);
-        this.groupData.groupList[newMemberIndex].list.push({
-          id: item.id,
-          name: item.name,
-          content: item.content,
-          price: item.price,
-          date: `${item.date.getFullYear()}/${item.date.getMonth() + 1}/${item.date.getDate()}`,
-          orignDate: item.date,
+    doneEditItem(i) {
+      const curMemberIdx = this.groupData.groupList.findIndex((obj) => obj.name === i.currentName);
+      const idx = this.groupData.groupList[curMemberIdx].list.findIndex((obj) => obj.id === i.id);
+      if (i.name === i.currentName) {
+        const data = this.groupData.groupList[curMemberIdx].list[idx];
+        data.content = i.content;
+        data.price = i.price;
+        data.date = `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`;
+        this.groupData.groupList[curMemberIdx].isHidden = false;
+      } else {
+        this.groupData.groupList[curMemberIdx].list.splice(idx, 1);
+        const newMemberIdx = this.groupData.groupList.findIndex((obj) => obj.name === i.name);
+        this.groupData.groupList[newMemberIdx].list.push({
+          id: i.id,
+          name: i.name,
+          content: i.content,
+          price: i.price,
+          date: `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`,
+          orignDate: i.date,
         });
-        this.isCalc = false;
-        this.closeAdd();
-        this.groupData.groupList[newMemberIndex].isHidden = false;
-        this.render();
+        this.groupData.groupList[newMemberIdx].isHidden = false;
       }
+      this.$swal.fire({
+        title: "編輯完成",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      this.isCalc = false;
+      this.closeAdd();
+      this.saveStorage();
     },
     // 打開編輯成員
-    openMember: function () {
+    openMember() {
       if (this.isEditMember) {
         return;
       } else {
-        this.isEditMember = !this.isEditMember;
+        this.isEditMember = true;
         this.memberTemp.groupName = this.groupData.groupName;
         this.memberTemp.memberList = JSON.parse(JSON.stringify(this.groupData.groupList));
       }
     },
     // 關閉編輯成員
-    closeMember: function () {
-      this.isEditMember = !this.isEditMember;
+    closeMember() {
+      this.isEditMember = false;
       this.memberTemp = {
         groupName: "",
         memberList: [],
@@ -319,21 +328,21 @@ export default {
       };
     },
     // 新增暫定成員
-    addTempMember: function () {
+    addTempMember() {
       if (this.memberTemp.memberList.length >= 8) {
         this.$swal.fire("最多八名成員");
-        return;
+      } else {
+        this.memberTemp.memberList.push({
+          id: Date.now(),
+          name: "",
+          list: [],
+          isHidden: false,
+          totalPrice: 0,
+        });
       }
-      this.memberTemp.memberList.push({
-        id: Date.now(),
-        name: "",
-        list: [],
-        isHidden: false,
-        totalPrice: 0,
-      });
     },
     // 刪除暫定成員
-    deleMember: function (obj) {
+    deleMember(obj) {
       if (this.memberTemp.memberList.length <= 2) {
         this.$swal.fire("最少兩名成員");
         return;
@@ -352,19 +361,25 @@ export default {
             this.memberTemp.deleMember.push(obj);
             const index = this.memberTemp.memberList.findIndex((item) => item.id === obj.id);
             this.memberTemp.memberList.splice(index, 1);
-          } else if (result.isDenied) {
-            return;
           }
         });
     },
     // 完成編輯成員
-    doneEditMember: function (item) {
+    doneEditMember(item) {
       // 判斷群組名
       if (!item.groupName) {
-        this.$swal.fire("請輸入群組名稱");
+        this.$swal.fire({
+          title: "請輸入群組名稱!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       } else if (item.groupName.length > 10) {
-        this.$swal.fire("名稱不可超過10個字");
+        this.$swal.fire({
+          title: "名稱不可超過10個字!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       } else {
         this.groupData.groupName = item.groupName;
@@ -373,7 +388,7 @@ export default {
       const isValue = item.memberList.every((item) => item.name !== "");
       if (!isValue) {
         this.$swal.fire({
-          title: "請輸入使用者名稱",
+          title: "請輸入使用者名稱!",
           showConfirmButton: false,
           timer: 1000,
         });
@@ -393,43 +408,41 @@ export default {
         }
       }
       this.groupData.groupList = JSON.parse(JSON.stringify(item.memberList));
-      const members = this.groupData.groupList.map((item) => item.name);
-      console.log(members);
-      this.pushData(members, this.groupData.groupName, "Group1");
-      this.isCalc = false;
-      this.closeMember();
-      this.render();
-    },
-    pushData: function (members, groupName, name) {
-      this.$router.push({
-        component: "Header",
-        params: { members, groupName, name },
+      this.homeData.map((i) => {
+        if (+i.id === +this.$route.params.id) {
+          i.member = this.memberTemp.memberList.map((i) => i.name);
+          i.groupName = this.memberTemp.groupName;
+        }
+        return i;
       });
+      this.$swal.fire({
+        title: "編輯完成",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      window.localStorage.setItem("HomeData", JSON.stringify(this.homeData));
+      this.closeMember();
+      this.saveStorage();
     },
   },
   mounted() {
     this.getStorage();
-    if (this.groupData.groupList.length > 0) {
-      return;
-    } else {
-      this.createData();
-    }
   },
   computed: {
-    perTotalPrice: function () {
+    perTotalPrice() {
       return (item) => {
         item.totalPrice = item.list.reduce((pre, cur) => pre + cur.price, 0);
         return item.totalPrice;
       };
     },
-    calTotalPrice: function () {
+    calTotalPrice() {
       const priceArr = this.groupData.groupList.map((item) => item.totalPrice);
       return priceArr.reduce((pre, cur) => pre + cur, 0);
     },
-    perAveragePrice: function () {
+    perAveragePrice() {
       return Math.round(this.calTotalPrice / this.groupData.groupList.length);
     },
-    calPay: function () {
+    calPay() {
       return (price) => {
         if (price > this.perAveragePrice) {
           return `應收 $${price - this.perAveragePrice}`;
@@ -438,7 +451,7 @@ export default {
         }
       };
     },
-    members: function () {
+    members() {
       return this.groupData.groupList.map((item) => item.name);
     },
   },

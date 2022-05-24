@@ -6,6 +6,7 @@ import VCalendar from 'v-calendar'
 import VueSweetalert2 from 'vue-sweetalert2';
 import AOS from "aos";
 import "aos/dist/aos.css";
+Vue.prototype.$bus = new Vue();
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
