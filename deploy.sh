@@ -1,7 +1,7 @@
 # 發生錯誤時執行終止指令
 set -e
 
-// build
+# build
 npm run build
 
 # navigate into the build output directory 引導到輸出目錄位置
