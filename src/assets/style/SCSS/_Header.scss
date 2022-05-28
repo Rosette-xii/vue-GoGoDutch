@@ -2,8 +2,6 @@ nav {
     z-index: 10;
     position: fixed;
     width: 100%;
-    height: 80px;
-    max-height: 80px;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -12,6 +10,8 @@ nav {
 
     .navBar {
         margin: 0 auto;
+        height: 80px;
+        max-height: 80px;
         padding: 15px;
         display: flex;
         justify-content: space-between;

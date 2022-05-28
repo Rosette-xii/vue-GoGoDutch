@@ -5,7 +5,7 @@
         <li v-for="i in groupData" :key="i.id" class="groupName" :class="{ unActive: i.member.length === 0 }">
           <div class="title d-flex justify-content-between">
             <h2>{{ i.groupName }}</h2>
-            <button @click="deleGroup(i)" type="button"><font-awesome-icon icon="fa-solid fa-trash" /></button>
+            <button @click="deleGroup(i)" type="button"><font-awesome-icon icon="fa-solid fa-trash" size="xl" /></button>
           </div>
           <div class="member d-flex">
             <p>成員：</p>
@@ -32,7 +32,7 @@
         <button @click="closeEdit" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
-        <input type="text" v-model="temp.groupName" placeholder="群組名稱(不超過10個字)" />
+        <input type="text" v-model="temp.groupName" placeholder="群組名稱(不超過10個字)" ref="autofocus" />
         <ul>
           <li v-for="i in temp.member" :key="i.id" class="d-flex align-item-center justify-content-between">
             <label :for="i.id">成員</label>
@@ -65,7 +65,6 @@ export default {
       ],
       isEdit: false,
       temp: {
-        isAbMode: false,
         groupName: "",
         id: 0,
         member: [
@@ -124,6 +123,7 @@ export default {
       } else if (item.member.length === 0 || !this.isEdit) {
         this.temp.id = item.id;
         this.isEdit = true;
+        this.$refs.autofocus.focus();
       }
     },
     doneEdit(item) {
@@ -166,7 +166,6 @@ export default {
       }
       this.groupData.forEach((item) => {
         if (item.id === this.temp.id) {
-          item.isAbMode = this.temp.isAbMode;
           item.groupName = this.temp.groupName;
           item.member = memberList;
           this.goPath(item.id);
@@ -177,10 +176,13 @@ export default {
     },
     addMember() {
       if (this.temp.member.length >= 8) {
-        this.$swal.fire("最多八名成員");
+        this.$swal.fire({
+          title: "最多八名成員!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
       } else {
         const allIds = this.temp.member.map((i) => i.id);
-
         this.temp.member.push({
           id: Math.max(...allIds) + 1 || this.temp.member.length + 1,
           name: "",
@@ -189,14 +191,18 @@ export default {
     },
     deleMember(obj) {
       if (this.temp.member.length <= 2) {
-        this.$swal.fire("最少兩名成員");
-        return;
+        this.$swal.fire({
+          title: "最少兩名成員!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      } else {
+        const index = this.temp.member.findIndex((item) => item.id === obj.id);
+        this.temp.member.splice(index, 1);
       }
-      const index = this.temp.member.findIndex((item) => item.id === obj.id);
-      this.temp.member.splice(index, 1);
     },
     deleGroup(item) {
-      if (this.groupData[0].member.length > 0) {
+      if (this.groupData.length > 1 || this.groupData[0].member.length > 0) {
         this.$swal
           .fire({
             title: "確定要刪除?",
@@ -211,14 +217,12 @@ export default {
               const index = this.groupData.findIndex((i) => i.id === item.id);
               localStorage.removeItem(`group${this.groupData[index].id}`);
               this.groupData.splice(index, 1);
-              this.saveStorage();
               this.$swal.fire({
                 title: "刪除成功",
                 showConfirmButton: false,
                 timer: 1000,
               });
               if (this.groupData.length === 0) {
-                localStorage.removeItem(`HomeData`);
                 this.groupData[0] = {
                   id: 1,
                   groupName: "新增群組",
@@ -226,12 +230,14 @@ export default {
                 };
               }
             }
+            this.saveStorage();
           });
       }
     },
     pushData(item) {
       if (item) {
         this.groupData.push(item);
+        this.openEdit(item);
         this.saveStorage();
       } else {
         this.openEdit(this.groupData[0]);
@@ -240,6 +246,7 @@ export default {
   },
   mounted() {
     this.getStorage();
+    window.scrollTo(0, 0);
   },
   created() {
     this.$bus.$on("pushNew", (i) => {

@@ -4,8 +4,8 @@
       <router-link to="/">
         <h1><img alt="gogodutch logo" src="../assets/images/gogodutch-en-logo.svg" /></h1>
       </router-link>
-      <button @click="addNewGroup" v-if="this.$route.path === '/'" type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-plus" /></button>
-      <button @click="goPath" v-else type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-arrow-left-long" /></button>
+      <button @click="addNewGroup" v-if="this.$route.path === '/'" type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-plus" size="lg" /></button>
+      <button @click="goPath" v-else type="button" class="navBtn circleBtn"><font-awesome-icon icon="fa-solid fa-arrow-left-long" size="lg" /></button>
     </div>
   </nav>
 </template>
@@ -29,7 +29,9 @@ export default {
     },
     addNewGroup() {
       const data = JSON.parse(window.localStorage.getItem("HomeData"));
-      if (data) {
+      if (!data || (data.length === 1 && data[0].member.length === 0)) {
+        this.$bus.$emit("pushNew");
+      } else {
         const allIds = data.map((i) => i.id);
         this.newGroup = {
           id: +Math.max(...allIds) + 1,
@@ -37,13 +39,6 @@ export default {
           member: [],
         };
         this.$bus.$emit("pushNew", this.newGroup);
-        this.$swal.fire({
-          title: "新增成功",
-          showConfirmButton: false,
-          timer: 1000,
-        });
-      } else {
-        this.$bus.$emit("pushNew");
       }
     },
     goPath() {
@@ -51,7 +46,7 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener("scroll", this.addShadow);
+    // window.addEventListener("scroll", this.addShadow);
   },
 };
 </script>

@@ -29,13 +29,11 @@
     }
 }
 
-.contentBlock {
-    height: calc(100vh - 147px);
-    flex-direction: column;
-}
-
 .contentHead {
-    margin-bottom: 16px;
+    position: sticky;
+    top: 80px;
+    padding-bottom: 16px;
+    background-color: $gray;
 
     .lgBtn {
         font-size: 16px;
@@ -51,8 +49,7 @@
 }
 
 .contentMain {
-    height: calc(100% - 220px);
-    overflow: auto;
+    padding-top: 16px;
 
     &>li {
         margin-bottom: 16px;
@@ -77,6 +74,7 @@
 .contentBottom {
     position: fixed;
     left: 50%;
+    bottom: 0;
     transform: translateX(-50%);
     width: 100%;
 
@@ -85,14 +83,13 @@
     }
 
     .lgBtn {
-
         border-radius: 0;
     }
 }
 
 .calcBlock {
     position: absolute;
-    bottom: 47px;
+    bottom: 45px;
     width: 100%;
     max-height: 500px;
     padding: 15px;

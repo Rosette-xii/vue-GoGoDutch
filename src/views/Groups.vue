@@ -6,7 +6,7 @@
           <div class="groupName">
             <div class="title d-flex justify-content-between">
               <h2>{{ groupData.groupName }}</h2>
-              <button @click="deleAllItem" type="button"><font-awesome-icon icon="fa-solid fa-trash" /></button>
+              <button @click="deleAllItem" type="button"><font-awesome-icon icon="fa-solid fa-trash" size="xl" /></button>
             </div>
             <p class="priceTotal">
               目前累積金額 $<span>{{ calTotalPrice }}</span>
@@ -58,10 +58,10 @@
     <div class="editBlock editMember" :class="{ show: isEditMember }">
       <div class="blockHead d-flex justify-content-between align-item-center">
         <h3>編輯群組</h3>
-        <button @click="closeEditMember" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
+        <button @click="isEditMember = false" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
-        <input type="text" v-model="memberTemp.groupName" placeholder="群組名稱" />
+        <input type="text" v-model="memberTemp.groupName" placeholder="群組名稱" ref="focusMember" />
         <ul>
           <li v-for="i in memberTemp.memberList" :key="i.id" class="d-flex align-item-center justify-content-between">
             <label :for="i.id">成員</label>
@@ -85,14 +85,15 @@
         <button @click="closeAddItem" type="button" class="editBtn"><font-awesome-icon icon="fa-solid fa-xmark" size="2x" /></button>
       </div>
       <div class="blockMain">
-        <input type="text" v-model="itemTemp.content" placeholder="項目名稱" />
-        <input type="number" v-model.number="itemTemp.price" />
+        <input type="text" v-model="itemTemp.content" placeholder="項目名稱" ref="focusItem" />
+        <input v-if="!this.itemTemp.isEdit" type="number" @focus="itemTemp.price = ''" @blur="itemTemp.price = 0" v-model.number="itemTemp.price" />
+        <input v-else type="number" v-model.number="itemTemp.price" />
         <vc-date-picker v-model="itemTemp.date">
           <template v-slot="{ inputValue, inputEvents }">
             <input class="bg-white border px-2 py-1 rounded" :value="inputValue" v-on="inputEvents" />
           </template>
         </vc-date-picker>
-        <select v-model="itemTemp.name">
+        <select v-model="itemTemp.name" class="selectHeight">
           <option value="" disabled>誰先付的</option>
           <option v-for="(i, index) in members" :key="index" :value="i">{{ i }}</option>
         </select>
@@ -194,6 +195,7 @@ export default {
         return;
       } else {
         this.isAdd = true;
+        this.$refs.focusItem.focus();
       }
     },
     closeAddItem() {
@@ -207,13 +209,25 @@ export default {
     },
     addNewItem(i) {
       if (!i.content) {
-        this.$swal.fire("請輸入項目名稱");
+        this.$swal.fire({
+          title: "請輸入項目名稱!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       } else if (typeof i.price !== "number") {
-        this.$swal.fire("請輸入正確金額");
+        this.$swal.fire({
+          title: "請輸入正確金額!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       } else if (!i.name) {
-        this.$swal.fire("請選擇支付對象");
+        this.$swal.fire({
+          title: "請選擇支付對象!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         return;
       }
       const index = this.groupData.groupList.findIndex((obj) => obj.name === i.name);
@@ -222,7 +236,7 @@ export default {
         id: Date.now(),
         name: i.name,
         content: i.content,
-        price: i.price,
+        price: +i.price || 0,
         date: `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`,
         orignDate: i.date,
       });
@@ -265,10 +279,11 @@ export default {
           currentName: i.name,
           name: i.name,
           content: i.content,
-          price: i.price,
+          price: +i.price,
           date: i.orignDate,
           isEdit: true,
         };
+        this.$refs.focusItem.focus();
       }
     },
     doneEditItem(i) {
@@ -277,7 +292,7 @@ export default {
       if (i.name === i.currentName) {
         const data = this.groupData.groupList[curMemberIdx].list[idx];
         data.content = i.content;
-        data.price = i.price;
+        data.price = +i.price || 0;
         data.date = `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`;
         this.groupData.groupList[curMemberIdx].isHidden = false;
       } else {
@@ -287,7 +302,7 @@ export default {
           id: i.id,
           name: i.name,
           content: i.content,
-          price: i.price,
+          price: +i.price || 0,
           date: `${i.date.getFullYear()}/${i.date.getMonth() + 1}/${i.date.getDate()}`,
           orignDate: i.date,
         });
@@ -309,15 +324,8 @@ export default {
         this.isEditMember = true;
         this.memberTemp.groupName = this.groupData.groupName;
         this.memberTemp.memberList = JSON.parse(JSON.stringify(this.groupData.groupList));
+        this.$refs.focusMember.focus();
       }
-    },
-    closeEditMember() {
-      this.isEditMember = false;
-      this.memberTemp = {
-        groupName: "",
-        memberList: [],
-        deleMember: [],
-      };
     },
     addTempMember() {
       if (this.memberTemp.memberList.length >= 8) {
@@ -410,12 +418,13 @@ export default {
         timer: 1000,
       });
       window.localStorage.setItem("HomeData", JSON.stringify(this.homeData));
-      this.closeEditMember();
+      this.isEditMember = false;
       this.saveStorage();
     },
   },
   mounted() {
     this.getStorage();
+    window.scrollTo(0, 0);
   },
   computed: {
     perTotalPrice() {
