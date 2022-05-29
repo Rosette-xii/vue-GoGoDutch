@@ -86,7 +86,7 @@
       </div>
       <div class="blockMain">
         <input type="text" v-model="itemTemp.content" placeholder="項目名稱" ref="focusItem" />
-        <input v-if="!this.itemTemp.isEdit" type="number" @focus.once="itemTemp.price = ''" v-model.number="itemTemp.price" placeholder="金額" />
+        <input v-if="!this.itemTemp.isEdit" type="number" @focus="itemTemp.price = focusPrice(itemTemp.price)" v-model.number="itemTemp.price" placeholder="金額" />
         <input v-else type="number" v-model.number="itemTemp.price" placeholder="金額" />
         <vc-date-picker v-model="itemTemp.date">
           <template v-slot="{ inputValue, inputEvents }">
@@ -451,6 +451,11 @@ export default {
     },
     members() {
       return this.groupData.groupList.map((item) => item.name);
+    },
+    focusPrice() {
+      return (i) => {
+        return i === 0 ? "" : i;
+      };
     },
   },
 };
