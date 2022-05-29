@@ -308,7 +308,7 @@ input::-webkit-inner-spin-button {
 }
 
 .swal2-actions {
-  margin-top: 0.5em !important;
+  margin: 0.25em 1.25em 0 !important;
 }
 
 nav {

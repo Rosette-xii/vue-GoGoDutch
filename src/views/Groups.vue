@@ -86,8 +86,8 @@
       </div>
       <div class="blockMain">
         <input type="text" v-model="itemTemp.content" placeholder="項目名稱" ref="focusItem" />
-        <input v-if="!this.itemTemp.isEdit" type="number" @focus="itemTemp.price = ''" @blur="itemTemp.price = 0" v-model.number="itemTemp.price" />
-        <input v-else type="number" v-model.number="itemTemp.price" />
+        <input v-if="!this.itemTemp.isEdit" type="number" @focus.once="itemTemp.price = ''" v-model.number="itemTemp.price" placeholder="金額" />
+        <input v-else type="number" v-model.number="itemTemp.price" placeholder="金額" />
         <vc-date-picker v-model="itemTemp.date">
           <template v-slot="{ inputValue, inputEvents }">
             <input class="bg-white border px-2 py-1 rounded" :value="inputValue" v-on="inputEvents" />
