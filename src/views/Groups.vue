@@ -41,7 +41,8 @@
       </div>
     </div>
     <div class="contentBottom" :class="{ overflowHidden: !isCalc }">
-      <button @click="isCalc = !isCalc" type="button" class="lgBtn">結算</button>
+      <button v-if="isCalc === false" @click="isCalc = true" type="button" class="lgBtn">結算</button>
+      <button v-else @click="isCalc = false" type="button" class="lgBtn">關閉 <font-awesome-icon icon="fa-solid fa-xmark" /></button>
       <div class="calcBlock" :class="{ hiddenCalcBlock: !isCalc }">
         <div class="calcTitle d-flex align-item-center justify-content-between">
           <h3>平均每人花費</h3>
