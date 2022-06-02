@@ -6,28 +6,23 @@ import VCalendar from 'v-calendar'
 import VueSweetalert2 from 'vue-sweetalert2';
 import AOS from "aos";
 import "aos/dist/aos.css";
-Vue.prototype.$bus = new Vue();
 
-/* import the fontawesome core */
+/* fontawesome */
 import { library } from '@fortawesome/fontawesome-svg-core'
-
-/* import specific icons */
 import { faUserSecret, faArrowLeftLong, faArrowRightLong, faPlus, faMinus, faXmark, faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
-/* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-/* add icons to the library */
 library.add(faUserSecret, faArrowLeftLong, faArrowRightLong, faPlus, faMinus, faXmark, faTrash, faPen)
-
-/* add font awesome icon component */
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 /*v-calendar*/
 Vue.use(VCalendar, {
   componentPrefix: 'vc',  // Use <vc-calendar /> instead of <v-calendar />
 });
-import 'sweetalert2/dist/sweetalert2.min.css';
-Vue.use(VueSweetalert2);
 
+Vue.use(VueSweetalert2);
+Vue.prototype.$bus = new Vue();
 Vue.config.productionTip = false
 
 new Vue({

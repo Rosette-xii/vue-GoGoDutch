@@ -45,9 +45,7 @@ export default {
       this.$router.push("/");
     },
   },
-  mounted() {
-    // window.addEventListener("scroll", this.addShadow);
-  },
+  mounted() {},
 };
 </script>
 

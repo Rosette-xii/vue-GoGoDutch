@@ -81,7 +81,6 @@ export default {
     };
   },
   methods: {
-    /* localstorage 相關 */
     saveStorage() {
       const data = JSON.stringify(this.groupData);
       localStorage.setItem("HomeData", data);
