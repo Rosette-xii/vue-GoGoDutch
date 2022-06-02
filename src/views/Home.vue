@@ -117,26 +117,28 @@ export default {
         ],
       };
     },
-    openEdit(item) {
-      if (item.member.length > 0) {
-        this.goPath(item.id);
-      } else if (item.member.length === 0 || !this.isEdit) {
-        this.temp.id = item.id;
+    openEdit(i) {
+      if (i.member.length > 0) {
+        this.goPath(i.id);
+      } else if (i.member.length === 0 || !this.isEdit) {
+        this.temp.id = i.id;
         this.isEdit = true;
-        this.$refs.autofocus.focus();
+        setTimeout(() => {
+          this.$refs.autofocus.focus();
+        }, 100);
       }
     },
-    doneEdit(item) {
-      const memberList = item.member.map((item) => item.name);
-      const isValue = item.member.every((item) => item.name !== "");
-      if (!item.groupName) {
+    doneEdit(i) {
+      const memberList = i.member.map((obj) => obj.name);
+      const isValue = i.member.every((obj) => obj.name !== "");
+      if (!i.groupName) {
         this.$swal.fire({
           title: "請輸入群組名稱!",
           showConfirmButton: false,
           timer: 1000,
         });
         return;
-      } else if (item.groupName.length > 10) {
+      } else if (i.groupName.length > 10) {
         this.$swal.fire({
           title: "名稱不可超過10個字!",
           showConfirmButton: false,
@@ -164,11 +166,11 @@ export default {
           }
         }
       }
-      this.groupData.forEach((item) => {
-        if (item.id === this.temp.id) {
-          item.groupName = this.temp.groupName;
-          item.member = memberList;
-          this.goPath(item.id);
+      this.groupData.forEach((i) => {
+        if (i.id === this.temp.id) {
+          i.groupName = this.temp.groupName;
+          i.member = memberList;
+          this.goPath(i.id);
         }
       });
       this.saveStorage();
@@ -197,11 +199,11 @@ export default {
           timer: 1000,
         });
       } else {
-        const index = this.temp.member.findIndex((item) => item.id === obj.id);
+        const index = this.temp.member.findIndex((i) => i.id === obj.id);
         this.temp.member.splice(index, 1);
       }
     },
-    deleGroup(item) {
+    deleGroup(i) {
       if (this.groupData.length > 1 || this.groupData[0].member.length > 0) {
         this.$swal
           .fire({
@@ -214,7 +216,7 @@ export default {
           })
           .then((result) => {
             if (result.isConfirmed) {
-              const index = this.groupData.findIndex((i) => i.id === item.id);
+              const index = this.groupData.findIndex((obj) => obj.id === i.id);
               localStorage.removeItem(`group${this.groupData[index].id}`);
               this.groupData.splice(index, 1);
               this.$swal.fire({
@@ -234,10 +236,10 @@ export default {
           });
       }
     },
-    pushData(item) {
-      if (item) {
-        this.groupData.push(item);
-        this.openEdit(item);
+    pushData(i) {
+      if (i) {
+        this.groupData.push(i);
+        this.openEdit(i);
         this.saveStorage();
       } else {
         this.openEdit(this.groupData[0]);

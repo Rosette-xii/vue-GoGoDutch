@@ -196,7 +196,9 @@ export default {
         return;
       } else {
         this.isAdd = true;
-        this.$refs.focusItem.focus();
+        setTimeout(() => {
+          this.$refs.focusItem.focus();
+        }, 100);
       }
     },
     closeAddItem() {
@@ -284,7 +286,9 @@ export default {
           date: i.orignDate,
           isEdit: true,
         };
-        this.$refs.focusItem.focus();
+        setTimeout(() => {
+          this.$refs.focusItem.focus();
+        }, 100);
       }
     },
     doneEditItem(i) {
@@ -325,7 +329,9 @@ export default {
         this.isEditMember = true;
         this.memberTemp.groupName = this.groupData.groupName;
         this.memberTemp.memberList = JSON.parse(JSON.stringify(this.groupData.groupList));
-        this.$refs.focusMember.focus();
+        setTimeout(() => {
+          this.$refs.focusMember.focus();
+        }, 100);
       }
     },
     addTempMember() {

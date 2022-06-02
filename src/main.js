@@ -25,7 +25,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VCalendar, {
   componentPrefix: 'vc',  // Use <vc-calendar /> instead of <v-calendar />
 });
-// If you don't need the styles, do not connect
 import 'sweetalert2/dist/sweetalert2.min.css';
 Vue.use(VueSweetalert2);
 
